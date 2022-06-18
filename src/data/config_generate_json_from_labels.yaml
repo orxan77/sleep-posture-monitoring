@@ -1,0 +1,2 @@
+src: '/Users/orkhanbayramli/Desktop/the-last-castle/HDA/project-sleep-posture-monitoring/data/keypoints/labels'
+dst: '/Users/orkhanbayramli/Desktop/the-last-castle/HDA/project-sleep-posture-monitoring/data/keypoints/labels/all_labels.json'
