@@ -33,15 +33,36 @@ positions_i = [
     "supine",
 ]
 
+# Available resizing methods for tf.image.resize()
+resize_methods = [
+    "area",
+    "nearest",
+    "bicubic",
+    "bilinear",
+    "gaussian",
+    "lanczos3",
+    "lanczos5",
+    "mitchellcubic",
+]
 
-def extract_labels(src: str, dst: str, categories: List[str]) -> None:
+
+def extract_labels(
+    src: str, dst: str, categories: List[str], resize_method: str = "area"
+) -> None:
     """A function to extract the images from the .txt file and save it to destination folder corresponding to their classes.
 
     Args:
         src (str): An absolute path to the .txt file containing image values.
         dst (str): An absolute path to the folder to save images.
-        categories: (List[str]): Categories to be extracted.
+        categories (List[str]): Categories to be extracted.
+        resize_method (str): Resize method for tf.image.resize function.
     """
+
+    if resize_method not in resize_methods:
+        logging.warning(
+            "Provided resizing method not available. Using the 'area' resizing method"
+        )
+        resize_method = "area"
 
     for category in categories:
         category_path = os.path.join(dst, category)
@@ -70,7 +91,7 @@ def extract_labels(src: str, dst: str, categories: List[str]) -> None:
                                 file_data = tf.image.resize(
                                     np.expand_dims(file_data, axis=-1),
                                     [256, 128],
-                                    method=tf.image.ResizeMethod.AREA,
+                                    method=resize_method,
                                 )
                                 file_data = np.squeeze(file_data)
                                 # The name of each file ends with '.txt'. Converting the
@@ -82,7 +103,7 @@ def extract_labels(src: str, dst: str, categories: List[str]) -> None:
                                 )
                                 # print(file_save_path)
                                 logging.debug(file_save_path)
-                                cv2.imwrite(file_save_path, file_data)
+                                # cv2.imwrite(file_save_path, file_data)
                                 img_counter += 1
 
 
@@ -99,7 +120,9 @@ def main():
     with open(args.config) as cf_file:
         config = yaml.safe_load(cf_file.read())
 
-    extract_labels(config["src"], config["dst"], config["categories"])
+    extract_labels(
+        config["src"], config["dst"], config["categories"], config["resize_method"]
+    )
 
 
 if __name__ == "__main__":
