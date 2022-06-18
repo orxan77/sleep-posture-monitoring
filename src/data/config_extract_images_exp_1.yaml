@@ -1,0 +1,6 @@
+src: '/Users/orkhanbayramli/Desktop/the-last-castle/HDA/project-sleep-posture-monitoring/data/raw/experiment-i'
+dst: '/Users/orkhanbayramli/Desktop/the-last-castle/HDA/project-sleep-posture-monitoring/data/keypoints/images'
+categories:
+  - 'right'
+  - 'left'
+  - 'supine'
