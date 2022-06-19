@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Tuple
 import yaml
 import argparse
 import os
@@ -17,10 +17,10 @@ positions_i = [
     "supine",
     "right",
     "left",
-    "right_wedge",
-    "right_wedge",
-    "left_wedge",
-    "left_wedge",
+    "right",
+    "right",
+    "left",
+    "left",
     "supine",
     "supine",
     "supine",
@@ -47,7 +47,12 @@ resize_methods = [
 
 
 def extract_labels(
-    src: str, dst: str, categories: List[str], resize_method: str = "area"
+    src: str,
+    dst: str,
+    categories: List[str],
+    resize_method: str = "area",
+    height: int = 256,
+    width: int = 128,
 ) -> None:
     """A function to extract the images from the .txt file and save it to destination folder corresponding to their classes.
 
@@ -56,6 +61,8 @@ def extract_labels(
         dst (str): An absolute path to the folder to save images.
         categories (List[str]): Categories to be extracted.
         resize_method (str): Resize method for tf.image.resize function.
+        height (int): Desired height of image to be resized.
+        width (int): Desired width of image to be resized.
     """
 
     if resize_method not in resize_methods:
@@ -77,9 +84,9 @@ def extract_labels(
                     with open(file_path, "r") as f:
                         # The first two rows are corrupted
                         for idx, line in enumerate(f.read().splitlines()[2:]):
-                            # Take every 40th image. Assuming there are around 80-100 images corresponding
+                            # Take every 10th image. Assuming there are around 80-100 images corresponding
                             # to a subject's same posture, we get 2-3 images.
-                            if idx % 20 == 0:
+                            if idx % 10 == 0:
                                 # Each line contains 64 x 32 = 2048 seperated integers
                                 raw_data = np.fromstring(line, dtype=float, sep="\t")
                                 # Maximum pixel value in the raw data is 1000. We need pixel
@@ -90,7 +97,7 @@ def extract_labels(
                                 file_data = file_data.reshape(64, 32)
                                 file_data = tf.image.resize(
                                     np.expand_dims(file_data, axis=-1),
-                                    [256, 128],
+                                    (height, width),
                                     method=resize_method,
                                 )
                                 file_data = np.squeeze(file_data)
@@ -103,7 +110,7 @@ def extract_labels(
                                 )
                                 # print(file_save_path)
                                 logging.debug(file_save_path)
-                                # cv2.imwrite(file_save_path, file_data)
+                                cv2.imwrite(file_save_path, file_data)
                                 img_counter += 1
 
 
