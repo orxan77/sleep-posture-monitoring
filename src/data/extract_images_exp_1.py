@@ -91,9 +91,9 @@ def extract_labels(
                                 raw_data = np.fromstring(line, dtype=float, sep="\t")
                                 # Maximum pixel value in the raw data is 1000. We need pixel
                                 # values in the range [0 - 255]
-                                file_data = np.round(raw_data * 255 / 1000).astype(
-                                    np.uint8
-                                )
+                                file_data = np.round(
+                                    raw_data * 255 / np.max(raw_data)
+                                ).astype(np.uint8)
                                 file_data = file_data.reshape(64, 32)
                                 file_data = tf.image.resize(
                                     np.expand_dims(file_data, axis=-1),
